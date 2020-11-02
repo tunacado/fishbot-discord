@@ -22,6 +22,7 @@
   "homepage": "https://github.com/tunacado/fishbot-discord",
   "dependencies": {
     "bunyan": "^1.8.14",
+    "config": "^3.3.2",
     "discord.js": "^12.4.1",
     "plugin-system": "^0.2.1"
   }

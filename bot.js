@@ -1,12 +1,15 @@
+// Set up configuration
+const config = require('config');
+
 // Set up logging
 const { DEBUG } = require('bunyan');
 var bunyan = require('bunyan');
 var log = bunyan.createLogger({name: "fishbot"});
-log.level(DEBUG);
+log.level(config.get('bot.logLevel'));
 
 // Create the bot
 const discord = require('discord.js');
-const bot = new discord.Client()
+const bot = new discord.Client();
 const fs = require('fs');
 
 // Load plugins
@@ -20,8 +23,10 @@ loadPlugins(
     }, log)
     .then(function onSuccess(loadedPlugins) {
         log.info(`Loaded plugins: ${loadedPlugins}`);
+        loadedPlugins.forEach(function(plugin) {
+            plugin.config = config;
+        })
         plugins = loadedPlugins;
-        
     })
 
     .catch(function onError(err) {
@@ -36,7 +41,8 @@ bot.on('ready', () => {
 bot.on('message', async receivedMessage => {
     plugins.forEach(async function (plugin) {
         if (typeof plugin.onMessage === "function") {
-            await plugin.onMessage(receivedMessage);        }
+            await plugin.onMessage(receivedMessage);
+        }
     });
 });
 
@@ -79,4 +85,5 @@ bot.on('error', error => {
 });
 
 // Start the bot
-bot.login("SOME_TOKEN")
+const token = config.get('bot.token');
+bot.login(token)

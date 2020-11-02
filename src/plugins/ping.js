@@ -9,7 +9,11 @@ var pingPlugin = (function () {
             const command = args.shift().toLowerCase();
 
             if (command === 'ping') {
-                message.reply('Pong!');
+                if(this.config.get('plugins.pingPlugin.reply') === true) {
+                    message.reply('Pong!');
+                } else {
+                    message.channel.send('Pong!');
+                }
             }
         }
     }
