@@ -2,7 +2,7 @@
   "name": "fishbot-discord",
   "version": "1.0.0",
   "description": "Discord bot for tunacado",
-  "main": "index.js",
+  "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +19,10 @@
   "bugs": {
     "url": "https://github.com/tunacado/fishbot-discord/issues"
   },
-  "homepage": "https://github.com/tunacado/fishbot-discord"
+  "homepage": "https://github.com/tunacado/fishbot-discord",
+  "dependencies": {
+    "bunyan": "^1.8.14",
+    "discord.js": "^12.4.1",
+    "plugin-system": "^0.2.1"
+  }
 }
