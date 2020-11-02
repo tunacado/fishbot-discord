@@ -3,9 +3,16 @@ const config = require('config');
 
 // Set up logging
 const { DEBUG } = require('bunyan');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({name: "fishbot"});
-log.level(config.get('bot.logLevel'));
+var Logger = require('bunyan');
+const log = new Logger({
+    name: 'fishbot',
+    streams: [
+        {
+            stream: process.stdout,
+            level: config.get('bot.logLevel')
+        }]
+    }
+);
 
 // Create the bot
 const discord = require('discord.js');
@@ -23,10 +30,16 @@ loadPlugins(
     }, log)
     .then(function onSuccess(loadedPlugins) {
         log.info(`Loaded plugins: ${loadedPlugins}`);
-        loadedPlugins.forEach(function(plugin) {
-            plugin.config = config;
-        })
         plugins = loadedPlugins;
+        plugins.forEach(function(plugin) {
+            plugin.config = config;
+            plugin.log = log;
+            // Allow plugins to specify their own startup methods
+            // post-construction after config is passed
+            if(typeof plugin.initialize === "function") {
+                plugin.initialize()
+            } 
+        })
     })
 
     .catch(function onError(err) {
@@ -37,6 +50,14 @@ loadPlugins(
 bot.on('ready', () => {
     log.info({ bot }, `Logged in to Discord as ${bot.user.tag}`);
 });
+
+bot.setInterval(() => {
+    plugins.forEach(async function (plugin) {
+        if (typeof plugin.periodic === "function") {
+            await plugin.periodic();
+        }
+    });
+}, config.get('bot.intervalSeconds') * 1000);
 
 bot.on('message', async receivedMessage => {
     plugins.forEach(async function (plugin) {
