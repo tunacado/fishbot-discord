@@ -2,6 +2,8 @@ const prefix = '!';
 
 var pingPlugin = (function () {
     return {
+        name: "ping",
+        
         onMessage: async function(message) {
             if (!message.content.startsWith(prefix) || message.author.bot) return;
 
