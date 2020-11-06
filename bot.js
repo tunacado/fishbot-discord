@@ -34,6 +34,7 @@ loadPlugins(
         plugins.forEach(function(plugin) {
             plugin.config = config;
             plugin.log = log;
+            plugin.bot = bot;
             // Allow plugins to specify their own startup methods
             // post-construction after config is passed
             if(typeof plugin.initialize === "function") {
